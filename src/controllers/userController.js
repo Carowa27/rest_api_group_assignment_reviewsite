@@ -1,7 +1,7 @@
 const { QueryTypes } = require("sequelize");
-const { userRoles, listRoles } = require("../constants/users");
+const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
-const { UnauthorizedError, NotFoundError } = require("../utils/errors");
+const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
 
 
 exports.updateUserById = async (req, res) => {

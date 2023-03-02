@@ -1,7 +1,17 @@
 //api/v1/resorts
 const express = require('express')
 const router = express.Router()
+const { isAuthenticated } = require('../middleware/authenticationMiddleware')
+const {
+    getAllResorts,
+    getResortById,
+    getAllResortsInCity,
+    getReviewsFromResort,
+    createNewResort,
+    updateResortById,
+    deleteResortById
 
+  } = require("../controllers/resortController");
 //get all resorts
 router.get("/",getAllResorts)
 //get resort by id

@@ -3,6 +3,20 @@ const catchErrors = (fn) => {
 		return fn(req, res, next).catch(next)
 	}
 }
+class CustomAPIError extends Error {
+	constructor(message) {
+		super(message)
+	}
+}
+
+class BadRequestError extends CustomAPIError {
+	constructor(message) {
+		super(message)
+		this.statusCode = 400
+		this.name = 'BadRequestError'
+	}
+}
+
 class UnauthenticatedError extends CustomAPIError {
 	constructor(message) {
 		super(message)
@@ -25,19 +39,9 @@ class ValidationError extends BadRequestError {
 		this.validationErrors = validationErrors
 	}
 }
-class CustomAPIError extends Error {
-	constructor(message) {
-		super(message)
-	}
-}
 
-class BadRequestError extends CustomAPIError {
-	constructor(message) {
-		super(message)
-		this.statusCode = 400
-		this.name = 'BadRequestError'
-	}
-}
+
+
 
 class NotFoundError extends CustomAPIError {
 	constructor(message) {

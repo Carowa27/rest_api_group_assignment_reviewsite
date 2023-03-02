@@ -2,6 +2,11 @@
 const express = require('express')
 const { isAuthenticated } = require('../middleware/authenticationMiddleware')
 const router = express.Router()
+const {
+    updateUserById,
+    deleteUserById,
+    createUser,
+  } = require("../controllers/userController");
 
 //put om auth not admin -> user by id info
 router.put("/:userId", isAuthenticated, updateUserById)

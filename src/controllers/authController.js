@@ -1,9 +1,9 @@
-const { UnauthenticatedError } = require("../utils/errors");
+const { UnauthenticatedError } = require("../utils/errorHandling");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
-const { userRoles } = require("../constants/users");
+const { userRoles } = require("../constants/user");
 
 exports.register = async (req, res) => {
   const { username, password, email, full_name, isAdmin } = req.body;

@@ -1,4 +1,4 @@
-const { UnauthenticatedError, UnauthorizedError } = require('../utils/errors')
+const { UnauthenticatedError, UnauthorizedError } = require('../utils/errorHandling')
 const jwt = require('jsonwebtoken')
 
 exports.isAuthenticated = async (req, res, next) => {
