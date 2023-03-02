@@ -18,7 +18,7 @@ const seedResortsDb = async () => {
         password TEXT NOT NULL,
         email TEXT NOT NULL,
         full_name TEXT,
-        is_admin BOOLEAN NOT NULL DEFAULT 0 CHECK(is_admin IN(0,1))
+        isAdmin BOOLEAN NOT NULL DEFAULT 0 CHECK (isAdmin IN (0, 1))
         );`);
     await sequelize.query(`
         CREATE TABLE IF NOT EXISTS resorts(
@@ -56,9 +56,9 @@ const seedResortsDb = async () => {
 
     users.forEach((users, index, array) => {
       let string = "(";
-      for (let i = 1; i < 10; i++) {
+      for (let i = 1; i < 6; i++) {
         string += `$${userInsertQueryVariables.length + i}`;
-        if (i < 9) string += ",";
+        if (i < 5) string += ",";
       }
       userInsertQuery += string + ")";
       if (index < array.length - 1) userInsertQuery += ",";
@@ -69,28 +69,32 @@ const seedResortsDb = async () => {
         users.full_name,
         users.isAdmin,
       ];
+      
       userInsertQueryVariables = [...userInsertQueryVariables, ...variables];
     });
+    console.log(userInsertQueryVariables);
     userInsertQuery += ";";
+
+    
 
     await sequelize.query(userInsertQuery, {
       bind: userInsertQueryVariables,
     });
 
-    // const [usersRes, metadata] = await sequelize.query(
-    //   "SELECT username, id FROM users"
-    // );
+    const [usersRes, metadata] = await sequelize.query(
+       "SELECT username, id FROM users"
+     );
 
-    // let resortsInsertQuery =
-    //   "INSERT INTO resorts (restort_name, restort_description, restort_address, restort_website, city_id, owner_id) VALUES ";
-    // let resortsInsertQueryVariables = [];
+     let resortsInsertQuery =
+       "INSERT INTO resorts (restort_name, restort_description, restort_address, restort_website, city_id, owner_id) VALUES ";
+     let resortsInsertQueryVariables = [];
 
-    // let reviewsInsertQuery =
-    //   "INSERT INTO reviews (review_description, review_rating, resort_id, user_id) VALUES ";
-    // let reviewsInsertQueryVariables = [];
+     let reviewsInsertQuery =
+       "INSERT INTO reviews (review_description, review_rating, resort_id, user_id) VALUES ";
+     let reviewsInsertQueryVariables = [];
 
-    // let citysInsertQuery = "INSERT INTO citys (city_name) VALUES ";
-    // let citysInsertQueryVariables = [];
+     let citysInsertQuery = "INSERT INTO citys (city_name) VALUES ";
+     let citysInsertQueryVariables = [];
   } catch (error) {
     console.error(error);
   } finally {
