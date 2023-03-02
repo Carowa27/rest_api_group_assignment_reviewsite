@@ -69,32 +69,110 @@ const seedResortsDb = async () => {
         users.full_name,
         users.isAdmin,
       ];
-      
+
       userInsertQueryVariables = [...userInsertQueryVariables, ...variables];
     });
     console.log(userInsertQueryVariables);
     userInsertQuery += ";";
 
-    
-
     await sequelize.query(userInsertQuery, {
       bind: userInsertQueryVariables,
     });
 
-    const [usersRes, metadata] = await sequelize.query(
-       "SELECT username, id FROM users"
-     );
+    // const [usersRes, metadata] = await sequelize.query(
+    //   "SELECT username, id FROM users"
+    // );
 
-     let resortsInsertQuery =
-       "INSERT INTO resorts (restort_name, restort_description, restort_address, restort_website, city_id, owner_id) VALUES ";
-     let resortsInsertQueryVariables = [];
+    let resortInsertQuery =
+      "INSERT INTO resorts (resort_name, resort_description, resort_address, resort_website, city_id, owner_id) VALUES ";
+    let resortInsertQueryVariables = [];
 
-     let reviewsInsertQuery =
-       "INSERT INTO reviews (review_description, review_rating, resort_id, user_id) VALUES ";
-     let reviewsInsertQueryVariables = [];
+    resorts.forEach((resorts, index, array) => {
+      let string = "(";
+      for (let i = 1; i < 15; i++) {
+        string += `$${resortInsertQueryVariables.length + i}`;
+        if (i < 14) string += ",";
+      }
+      resortInsertQuery += string + ")";
+      if (index < array.length - 1) resortInsertQuery += ",";
+      const variables = [
+        resorts.resort_name,
+        resorts.resort_description,
+        resorts.resort_address,
+        resorts.resort_website,
+        resorts.city_id,
+        resorts.owner_id,
+      ];
 
-     let citysInsertQuery = "INSERT INTO citys (city_name) VALUES ";
-     let citysInsertQueryVariables = [];
+      //ev find id stuff
+
+      resortInsertQueryVariables = [
+        ...resortInsertQueryVariables,
+        ...variables,
+      ];
+    });
+    console.log(resortInsertQueryVariables);
+    resortInsertQuery += ";";
+
+    await sequelize.query(resortInsertQuery, {
+      bind: resortInsertQueryVariables,
+    });
+
+    let reviewInsertQuery =
+      "INSERT INTO reviews (review_description, review_rating, resort_id, user_id) VALUES ";
+    let reviewInsertQueryVariables = [];
+
+    reviews.forEach((reviews, index, array) => {
+      let string = "(";
+      for (let i = 1; i < 15; i++) {
+        string += `$${reviewInsertQueryVariables.length + i}`;
+        if (i < 14) string += ",";
+      }
+      reviewInsertQuery += string + ")";
+      if (index < array.length - 1) reviewInsertQuery += ",";
+      const variables = [
+        reviews.review_description,
+        reviews.review_rating,
+        reviews.resort_id,
+        reviews.user_id,
+      ];
+
+      //ev find id stuff
+
+      reviewInsertQueryVariables = [
+        ...reviewInsertQueryVariables,
+        ...variables,
+      ];
+    });
+    console.log(reviewInsertQueryVariables);
+    reviewInsertQuery += ";";
+
+    await sequelize.query(reviewInsertQuery, {
+      bind: reviewInsertQueryVariables,
+    });
+
+    let cityInsertQuery = "INSERT INTO citys (city_name) VALUES ";
+    let cityInsertQueryVariables = [];
+    citys.forEach((citys, index, array) => {
+      let string = "(";
+      for (let i = 1; i < 6; i++) {
+        string += `$${cityInsertQueryVariables.length + i}`;
+        if (i < 5) string += ",";
+      }
+      cityInsertQuery += string + ")";
+      if (index < array.length - 1) cityInsertQuery += ",";
+      const variables = [citys.city_name];
+
+      //ev find id stuff
+
+      cityInsertQueryVariables = [...cityInsertQueryVariables, ...variables];
+    });
+    console.log(cityInsertQueryVariables);
+    cityInsertQuery += ";";
+
+    await sequelize.query(cityInsertQuery, {
+      bind: cityInsertQueryVariables,
+    });
   } catch (error) {
     console.error(error);
   } finally {
