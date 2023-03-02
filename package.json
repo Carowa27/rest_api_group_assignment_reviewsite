@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js",
+    "seedDb": "node ./src/database/seedDb.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
