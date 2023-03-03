@@ -41,8 +41,7 @@ exports.isAuthenticated = async (req, res, next) => {
 // NOTE: Should always be placed AFTER isAuthenticated middleware
 exports.authorizeRoles = (...roles) => {
 	return (req, res, next) => {
-		// Check that user has a role && it includes the desired role(s)
-		//behöver fixa till if true?? då vi inte har roller utan boolean ist??
+
 		if (!req.user?.role || !roles.includes(req.user.role)) {
 			throw new UnauthorizedError('Unauthorized Access')
 		}

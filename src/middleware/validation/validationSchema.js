@@ -1,8 +1,7 @@
 const { body } = require("express-validator");
 
-//express validator ger oss möjlighet till detta sätt att validera vår req.body med express inbyggda methods.
 exports.registerSchema = [
-  body("email").isString().withMessage("You must provide a valid email address"), //with message = custom meddelande vi kan välja att skicka med.
+  body("email").isEmail().withMessage("You must provide a valid email address"), 
   body("password")
     .not()
     .isEmpty()
@@ -10,16 +9,16 @@ exports.registerSchema = [
     .withMessage(
       "You must provide a password that is at least 6 characters long"
     ),
-  body("user_alias") //lagt till detta för vår gym app.
+  body("username")
     .not()
     .isEmpty()
     .isLength({ min: 3, max: 30 })
     .withMessage(
-      "Sorry, your user alias must be between 3 and 50 characters long. Try again!"
+      "Sorry, your user username must be between 3 and 50 characters long."
     ),
 ];
 
 exports.loginSchema = [
-  body("username").isString().withMessage("You must provide a valid email address"),
+  body("username").isString().withMessage("You must provide a valid username"),
   body("password").not().isEmpty().withMessage("You must provide a password"),
 ];

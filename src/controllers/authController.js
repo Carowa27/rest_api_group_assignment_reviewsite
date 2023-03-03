@@ -6,29 +6,29 @@ const { QueryTypes } = require("sequelize");
 const { userRoles } = require("../constants/user");
 
 exports.register = async (req, res) => {
-  const { username, password, email, full_name, isAdmin } = req.body;
+  const { username, password, email, full_name } = req.body;
 
   const salt = await bcrypt.genSalt(10);
   const hashedpassword = await bcrypt.hash(password, salt);
 
-  const [results, metadata] = await sequelize.query(
+ /*  const [results, metadata] = await sequelize.query(
     "SELECT id FROM users LIMIT 1"
-  );
+  ); */
 
-  if (!results || results.length < 1) {
+  
     await sequelize.query(
-      "INSERT INTO users (username, password, email, full_name, isAdmin) VALUES ($username, $password, $email, $full_name, $isAdmin)",
+      "INSERT INTO users (username, password, email, full_name, isAdmin) VALUES ($username, $password, $email, $full_name, FALSE)",
       {
         bind: {
           username: username,
           password: hashedpassword,
           email: email,
           full_name: full_name,
-          isAdmin: isAdmin,
+          //isAdmin: isAdmin,
         },
       }
     );
-  }
+  
 
   return res.status(200).json({
     message: "register works",
@@ -48,22 +48,31 @@ exports.login = async (req, res) => {
 
   console.log(user);
 
-  if (!user) throw new UnauthenticatedError("Invalid Credentials");
+  if (!user) {
+    console.log("test 1")
+    throw new UnauthenticatedError("Invalid Credentials");
+  }
 
+  
   const isPasswordCorrect = await bcrypt.compare(
     canditatePassword,
     user.password
   );
-  if (!isPasswordCorrect) throw new UnauthenticatedError("Invalid Credentials");
+  if (!isPasswordCorrect) {
+    console.log("test 2")
+    throw new UnauthenticatedError("Invalid Credentials");
+  } 
+
+  
 
   const jwtPayload = {
     userId: user.id,
-
+    //email: user.email,
     username: user.username,
     role: user["isAdmin"] === 1 ? userRoles.ADMIN : userRoles.USER,
   };
 
-  const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
+  const jwtToken = jwt.sign(jwtPayload, process.env.JTW_SECRET, {
     expiresIn: process.env.JTW_EXPERATION_TIME,
   });
 

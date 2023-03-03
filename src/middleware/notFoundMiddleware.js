@@ -10,5 +10,3 @@ exports.notFoundMiddleware = (req, res, next) => {
 		return res.status(404).sendFile(path.join(__dirname, '..', 'views', 'notFound.html'))
 	}
 }
-
-// exports.notFound = (req, res) => res.status(404).send('Route does not exist')
