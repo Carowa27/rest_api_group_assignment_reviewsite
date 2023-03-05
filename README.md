@@ -19,5 +19,5 @@
     email: "Sven.Larsson@hotmail.com",
 
     username: "admin",
-    password: "admin",
+    password: "adminadmin",
     email: "admin@admin.com",

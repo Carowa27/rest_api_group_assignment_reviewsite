@@ -216,27 +216,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "createUser",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "localhost:3000/api/v1/users/",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"users",
-								""
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
