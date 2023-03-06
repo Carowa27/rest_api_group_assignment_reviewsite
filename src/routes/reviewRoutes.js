@@ -8,11 +8,10 @@ const {
   deleteReviewById,
 } = require("../controllers/reviewController");
 
-router.get("/resorts/:resortId", getReviewsFromResort); //??
+router.get("/resorts/:resortId", getReviewsFromResort);
 
-//post om auth ->review
 router.post("/", isAuthenticated, createNewReview);
-//delete om auth om admin -> review by id
-router.delete("/:reviewId", isAuthenticated, deleteReviewById); //lägga till om admin true, authorizeRoles?
+
+router.delete("/:reviewId", isAuthenticated, deleteReviewById);
 
 module.exports = router;

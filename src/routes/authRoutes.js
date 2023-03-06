@@ -8,9 +8,8 @@ const {
 } = require("../middleware/validation/validationSchema");
 const { validate } = require("../middleware/validation/validationMiddleware");
 
-//user register
 router.post("/register", validate(registerSchema), register);
-//user login
+
 router.post("/login", validate(loginSchema), login);
 
 module.exports = router;

@@ -10,18 +10,17 @@ const {
   updateResortById,
   deleteResortById,
 } = require("../controllers/resortController");
-//get all resorts
-router.get("/", getAllResorts);
-//get resort by id
-router.get("/:resortId", getResortById);
-//get resorts from city id, per 10
-router.get("/citys/:cityName", getAllResortsInCity); //??
 
-//post om auth ->resort
+router.get("/", getAllResorts);
+
+router.get("/:resortId", getResortById);
+
+router.get("/citys/:cityName", getAllResortsInCity);
+
 router.post("/", isAuthenticated, createNewResort);
-//put om auth om admin -> resort by id info
-router.put("/:resortId", isAuthenticated, updateResortById); //lägga till om admin true, authorizeRoles?
-//delete om auth om admin -> resort by id
-router.delete("/:resortId", isAuthenticated, deleteResortById); //lägga till om admin true, authorizeRoles?
+
+router.put("/:resortId", isAuthenticated, updateResortById);
+
+router.delete("/:resortId", isAuthenticated, deleteResortById);
 
 module.exports = router;
