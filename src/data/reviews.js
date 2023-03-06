@@ -54,7 +54,7 @@ exports.reviews = [
       "Mycket djur, stor variation på saker att göra, underbart familjeäventyr!",
     review_rating: 5,
     resort_id: 2,
-    user_id: 5,
+    user_id: 4,
   },
   {
     review_description: "",

@@ -29,9 +29,6 @@ exports.getResortById = async (req, res) => {
   }
 
   return res.json(results);
-  // return res.status(200).json({
-  //   message: "getResortById works",
-  // });
 };
 
 exports.getAllResortsInCity = async (req, res) => {
@@ -52,33 +49,8 @@ exports.getAllResortsInCity = async (req, res) => {
   }
 
   return res.json(results);
-  // return res.status(200).json({
-  //   message: "getAllResortsInCity works",
-  // });
 };
 
-exports.getReviewsFromResort = async (req, res) => {
-  const resortId = req.params.resortId;
-
-  const [results, metadata] = await sequelize.query(
-    `
-    SELECT resorts.id AS resortId, resort_name, resorts.city_id, review.resort_id FROM resorts
-    LEFT JOIN reviews ON review.resort_id = resort.id
-    WHERE resortId = $resortId;
-		`,
-    {
-      bind: { resortId: resortId },
-    }
-  );
-  if (!results || results.length == 0) {
-    throw new NotFoundError("did not find reviews for that resort");
-  }
-
-  return res.json(results);
-  // return res.status(200).json({
-  //   message: "getReviewsFromResort works",
-  // });
-};
 exports.createNewResort = async (req, res) => {
   return res.status(200).json({
     message: "createNewResort + auth works",

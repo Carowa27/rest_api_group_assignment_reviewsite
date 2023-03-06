@@ -21,7 +21,7 @@ GO
 
 CREATE TABLE [review] (
   [id] int PRIMARY KEY,
-  [review_details] nvarchar(255),
+  [review_description] nvarchar(255),
   [review_rating] int,
   [resort_id] int,
   [user_id] int
