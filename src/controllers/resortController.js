@@ -52,10 +52,43 @@ exports.getAllResortsInCity = async (req, res) => {
 };
 
 exports.createNewResort = async (req, res) => {
-  return res.status(200).json({
-    message: "createNewResort + auth works",
-  });
+
+  const {resort_name, resort_description, resort_address, resort_website, city_id, owner_id} = req.body;
+
+
+  if (req.user.role !== userRoles.ADMIN) {
+    const [userListRole, userListRoleMeta] = await sequelize.query(
+      `
+        SELECT r.role_name 
+        FROM users ul
+          JOIN roles r ON r.id = ul.fk_roles_id 
+        WHERE ul.fk_lists_id = $listId AND fk_users_id = $userId 
+        LIMIT 1
+      `,
+      {
+        bind: { listId: listId, userId: req.user.userId },
+        type: QueryTypes.SELECT,
+      }
+    );
+
+    if (!userListRole) {
+      throw new UnauthorizedError("You are not allowed to perform this action");
+    }
+  }
+
+  // ELSE - om vi är admin 
+
+  // Kod
+
+
 };
+
+
+
+
+
+
+
 
 exports.updateResortById = async (req, res) => {
   return res.status(200).json({
