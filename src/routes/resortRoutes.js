@@ -1,31 +1,27 @@
 //api/v1/resorts
-const express = require('express')
-const router = express.Router()
-const { isAuthenticated } = require('../middleware/authenticationMiddleware')
+const express = require("express");
+const router = express.Router();
+const { isAuthenticated } = require("../middleware/authenticationMiddleware");
 const {
-    getAllResorts,
-    getResortById,
-    getAllResortsInCity,
-    getReviewsFromResort,
-    createNewResort,
-    updateResortById,
-    deleteResortById
-
-  } = require("../controllers/resortController");
+  getAllResorts,
+  getResortById,
+  getAllResortsInCity,
+  createNewResort,
+  updateResortById,
+  deleteResortById,
+} = require("../controllers/resortController");
 //get all resorts
-router.get("/",getAllResorts)
+router.get("/", getAllResorts);
 //get resort by id
-router.get("/:resortId",getResortById)
+router.get("/:resortId", getResortById);
 //get resorts from city id, per 10
-router.get("/:cityId",getAllResortsInCity)//??
-//get resort by id, per 10, sort by rating (reviews)
-router.get("/:resortId/reviews",getReviewsFromResort)//??
+router.get("/citys/:cityName", getAllResortsInCity); //??
 
 //post om auth ->resort
-router.post('/', isAuthenticated, createNewResort)
+router.post("/", isAuthenticated, createNewResort);
 //put om auth om admin -> resort by id info
-router.put('/:resortId', isAuthenticated, updateResortById)//lägga till om admin true, authorizeRoles?
+router.put("/:resortId", isAuthenticated, updateResortById); //lägga till om admin true, authorizeRoles?
 //delete om auth om admin -> resort by id
-router.delete('/:resortId', isAuthenticated, deleteResortById)//lägga till om admin true, authorizeRoles?
+router.delete("/:resortId", isAuthenticated, deleteResortById); //lägga till om admin true, authorizeRoles?
 
-module.exports = router
+module.exports = router;

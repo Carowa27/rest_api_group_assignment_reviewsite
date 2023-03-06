@@ -276,7 +276,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/api/v1/resorts/:cityId?limit=10",
+							"raw": "localhost:3000/api/v1/resorts/citys/:cityName?limit=10",
 							"host": [
 								"localhost"
 							],
@@ -285,7 +285,8 @@
 								"api",
 								"v1",
 								"resorts",
-								":cityId"
+								"citys",
+								":cityName"
 							],
 							"query": [
 								{
@@ -295,41 +296,7 @@
 							],
 							"variable": [
 								{
-									"key": "cityId",
-									"value": ""
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getReviewsFromResort",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:3000/api/v1/resorts/:resortId/reviews?limit=10",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"v1",
-								"resorts",
-								":resortId",
-								"reviews"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "10"
-								}
-							],
-							"variable": [
-								{
-									"key": "resortId",
+									"key": "cityName",
 									"value": ""
 								}
 							]
@@ -407,6 +374,93 @@
 									"key": "resortId",
 									"value": ""
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reviewRoutes",
+			"item": [
+				{
+					"name": "getReviewsFromResort",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/v1/reviews/resorts/:restortId?limit=10",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								"resorts",
+								":restortId"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							],
+							"variable": [
+								{
+									"key": "restortId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteReviewById",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/v1/reviews/:reviewId",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								":reviewId"
+							],
+							"variable": [
+								{
+									"key": "reviewId",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createNewReview",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/api/v1/reviews/",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								""
 							]
 						}
 					},
