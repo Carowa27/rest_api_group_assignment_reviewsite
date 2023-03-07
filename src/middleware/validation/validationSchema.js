@@ -1,7 +1,7 @@
 const { body } = require("express-validator");
 
 exports.registerSchema = [
-  body("email").isEmail().withMessage("You must provide a valid email address"), 
+  body("email").isEmail().withMessage("You must provide a valid email address"),
   body("password")
     .not()
     .isEmpty()
@@ -12,9 +12,9 @@ exports.registerSchema = [
   body("username")
     .not()
     .isEmpty()
-    .isLength({ min: 3, max: 30 })
+    .isLength({ min: 3, max: 20 })
     .withMessage(
-      "Sorry, your user username must be between 3 and 50 characters long."
+      "Sorry, your user username must be between 3 and 20 characters long."
     ),
 ];
 

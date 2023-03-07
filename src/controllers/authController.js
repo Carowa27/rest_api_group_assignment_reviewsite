@@ -23,7 +23,6 @@ exports.register = async (req, res) => {
         password: hashedpassword,
         email: email,
         full_name: full_name,
-        //isAdmin: isAdmin,
       },
     }
   );
@@ -50,7 +49,7 @@ exports.login = async (req, res) => {
     console.log("test 1");
     throw new UnauthenticatedError("Invalid Credentials");
   }
-
+  // @ts-ignore
   const isPasswordCorrect = await bcrypt.compare(
     canditatePassword,
     user.password
@@ -61,14 +60,16 @@ exports.login = async (req, res) => {
   }
 
   const jwtPayload = {
+    // @ts-ignore
     userId: user.id,
-    //email: user.email,
+    // @ts-ignore
     username: user.username,
     role: user["isAdmin"] === 1 ? userRoles.ADMIN : userRoles.USER,
   };
 
-  const jwtToken = jwt.sign(jwtPayload, process.env.JTW_SECRET, {
-    expiresIn: process.env.JTW_EXPERATION_TIME,
+  const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+    // process.env.JTW_EXPERATION_TIME,
   });
 
   return res.json({ token: jwtToken, user: jwtPayload });
