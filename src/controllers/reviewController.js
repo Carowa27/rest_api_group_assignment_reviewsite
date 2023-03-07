@@ -21,8 +21,6 @@ exports.getReviewsFromResort = async (req, res) => {
     throw new NotFoundError("did not find reviews for that resort");
   }
 
-  // return res.json(results);
-
   const resortResponse = {
     resortId: resortId,
     resortName: results[0].resort_name,
@@ -39,6 +37,11 @@ exports.getReviewsFromResort = async (req, res) => {
 };
 
 exports.createNewReview = async (req, res) => {
+  //om anv är inloggad
+  if (req.user.role !== userRoles.ADMIN || userRoles.USER) {
+    //error
+  }
+
   // const { review_description, review_rating, resort_id, user_id } = req.body;
 
   // await sequelize.query(
@@ -61,6 +64,7 @@ exports.createNewReview = async (req, res) => {
   });
 };
 exports.deleteReviewById = async (req, res) => {
+  //om anv är inloggad och review är skriven av denna user
   return res.status(200).json({
     message: "deleteReviewById works",
   });
