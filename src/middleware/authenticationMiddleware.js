@@ -16,7 +16,7 @@ exports.isAuthenticated = async (req, res, next) => {
 
   // If no token, then throw UnauthenticatedError
   if (!token) {
-    throw new UnauthenticatedError("Authentication invalid (no token)");
+    throw new UnauthenticatedError("Authentication invalid");
   }
 
   try {
@@ -37,8 +37,7 @@ exports.isAuthenticated = async (req, res, next) => {
     // Go to next step (controller || middleware)
     next();
   } catch (error) {
-    throw new UnauthenticatedError(error);
-    // throw new UnauthenticatedError("Authentication invalid (aM catch error)");
+    throw new UnauthenticatedError("Authentication invalid");
   }
 };
 
