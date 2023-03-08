@@ -90,9 +90,7 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const response = pm.response.json();\r",
-									"\r",
-									"pm.environment.set(\"jwt_token\",response.token)"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -148,7 +146,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\":\"admin\",\r\n\"password\":\"adminadmin\"}",
+							"raw": "{\"username\":\"\",\r\n\"password\":\"\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -179,8 +177,27 @@
 				{
 					"name": "UpdateUserById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"full_name\":,\r\n\"email\":,\r\n\"password\":}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "localhost:3000/api/v1/users/:userId",
 							"host": [
@@ -206,6 +223,16 @@
 				{
 					"name": "deleteUserById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -320,8 +347,27 @@
 				{
 					"name": "createNewResort",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"resort_name\":\"\",\r\n\"resort_description\":\"\",\r\n\"resort_address\":\"\",\r\n\"resort_website\":\"\",\r\n\"city_id\":,\r\n\"owner_id\":}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "localhost:3000/api/v1/resorts/",
 							"host": [
@@ -341,8 +387,27 @@
 				{
 					"name": "updateResortById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"resort_name\":\"\",\r\n\"resort_description\":\"\",\r\n\"resort_address\":\"\",\r\n\"resort_website\":\"\",\r\n\"city_id\":}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "localhost:3000/api/v1/resorts/:resortId",
 							"host": [
@@ -368,6 +433,16 @@
 				{
 					"name": "deleteResortById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -434,6 +509,16 @@
 				{
 					"name": "deleteReviewById",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -461,8 +546,27 @@
 				{
 					"name": "createNewReview",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"review_description\":,\r\n\"review_rating\":,\r\n\"resort_id\":}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "localhost:3000/api/v1/reviews/",
 							"host": [
@@ -474,6 +578,13 @@
 								"v1",
 								"reviews",
 								""
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
 							]
 						}
 					},
