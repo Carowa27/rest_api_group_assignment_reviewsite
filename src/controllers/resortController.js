@@ -52,43 +52,34 @@ exports.getAllResortsInCity = async (req, res) => {
 };
 
 exports.createNewResort = async (req, res) => {
-  const {
-    resort_name,
-    resort_description,
-    resort_address,
-    resort_website,
-    city_id,
-    owner_id,
-  } = req.body;
-
-  if (req.user.role !== userRoles.ADMIN) {
-    // const [userListRole, userListRoleMeta] = await sequelize.query(
-    //   `
-    //     SELECT r.role_name
-    //     FROM users ul
-    //       JOIN roles r ON r.id = ul.fk_roles_id
-    //     WHERE ul.fk_lists_id = $listId AND fk_users_id = $userId
-    //     LIMIT 1
-    //   `,
-    //   {
-    //     bind: { listId: listId, userId: req.user.userId },
-    //     type: QueryTypes.SELECT,
-    //   }
-    // );
-
-    if (!userListRole) {
-      throw new UnauthorizedError("You are not allowed to perform this action");
-    }
+  if (req.user.role == userRoles.ADMIN) {
+    const {
+      resort_name,
+      resort_description,
+      resort_address,
+      resort_website,
+      city_id,
+      owner_id,
+    } = req.body;
+    //const activeUserId = req.user.userId;
+    await sequelize.query(
+      "INSERT INTO resorts (resort_name, resort_description, resort_address, resort_website, city_id, owner_id) VALUES ($resort_name, $resort_description, $resort_address, $resort_website, (SELECT id FROM citys WHERE id=$city_id), (SELECT id FROM users WHERE id=$owner_id))",
+      {
+        bind: {
+          resort_name: resort_name,
+          resort_description: resort_description,
+          resort_address: resort_address,
+          resort_website: resort_website,
+          city_id: city_id,
+          owner_id: owner_id,
+        },
+      }
+    );
     return res.status(200).json({
-      message: "createNewResort works (userRoles.USER)",
+      message: "new resort registered",
     });
   } else {
-    // ELSE - om vi är admin
-
-    // Kod
-    return res.status(200).json({
-      message: "createNewResort works (userRoles.ADMIN)",
-    });
+    throw new UnauthorizedError("Authentication invalid");
   }
 };
 
