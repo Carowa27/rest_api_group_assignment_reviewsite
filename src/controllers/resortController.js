@@ -1,4 +1,5 @@
 const { QueryTypes } = require("sequelize");
+//const { SELECT } = require("sequelize/types/query-types");
 const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
 const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
@@ -84,9 +85,56 @@ exports.createNewResort = async (req, res) => {
 };
 
 exports.updateResortById = async (req, res) => {
-  return res.status(200).json({
-    message: "updateResortById + auth works",
-  });
+  const resortId = req.params.resortId;
+  const activeUserId = req.user.userId;
+
+  const {
+    resort_name,
+    resort_description,
+    resort_address,
+    resort_website,
+    city_id,
+  } = req.body;
+  const resortsListed = await sequelize.query(
+    "SELECT * FROM resorts WHERE id = $resortId",
+    {
+      bind: {
+        resortId: resortId,
+      },
+    }
+  );
+  if (
+    req.user.role == userRoles.ADMIN ||
+    activeUserId == resortsListed[0].owner_id // Här nånstans är det fel. EFtersom jag är kass.
+  ) {
+    if (resortsListed.length <= 0) {
+      throw new UnauthorizedError("Can't find a resorts with that ID");
+    }
+    await sequelize.query(
+      `
+    UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
+    resort_adress = $resort_address, resort_website = $resort_website, 
+    city_id = $city_id
+    WHERE id = $resortId;
+    RETURNING *;
+    `,
+      {
+        bind: {
+          resort_name: resort_name,
+          resort_description: resort_description,
+          resort_adress: resort_address,
+          resort_website: resort_website,
+          city_id: city_id,
+          resortId: resortId, // ID?
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Resort updated",
+    });
+  } else {
+    throw new UnauthorizedError("Authentication invalid");
+  }
 };
 exports.deleteResortById = async (req, res) => {
   return res.status(200).json({
