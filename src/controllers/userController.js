@@ -54,7 +54,7 @@ exports.deleteUserById = async (req, res) => {
   const activeUserId = req.user.userId;
   const userId = Number(req.params.userId);
 
-  const [userToChange] = await sequelize.query(
+  const [userExist] = await sequelize.query(
     `SELECT * FROM users WHERE id= $userId;`,
     {
       bind: {
@@ -63,7 +63,7 @@ exports.deleteUserById = async (req, res) => {
     }
   );
 
-  if (userToChange.length == 0) {
+  if (userExist.length == 0) {
     throw new BadRequestError("That user does not exists");
   }
   if (req.user.role == userRoles.ADMIN || activeUserId == userId) {
@@ -85,12 +85,9 @@ exports.deleteUserById = async (req, res) => {
         );
       }
     } else {
-      const [userToDelete] = await sequelize.query(
-        `DELETE FROM users WHERE id = $userId;`,
-        {
-          bind: { userId: userId },
-        }
-      );
+      await sequelize.query(`DELETE FROM users WHERE id = $userId;`, {
+        bind: { userId: userId },
+      });
     }
     return res.sendStatus(204);
   } else {

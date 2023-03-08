@@ -1,7 +1,11 @@
 const { QueryTypes } = require("sequelize");
 const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
-const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
+const {
+  UnauthorizedError,
+  NotFoundError,
+  BadRequestError,
+} = require("../utils/errorHandling");
 
 exports.getReviewsFromResort = async (req, res) => {
   const resortId = req.params.resortId;
@@ -37,35 +41,52 @@ exports.getReviewsFromResort = async (req, res) => {
 };
 
 exports.createNewReview = async (req, res) => {
-  //om anv är inloggad
-  if (req.user.role !== userRoles.ADMIN || userRoles.USER) {
-    //error
+  if (req.user.role == userRoles.ADMIN || userRoles.USER) {
+    const { review_description, review_rating, resort_id } = req.body;
+    const activeUserId = req.user.userId;
+    await sequelize.query(
+      "INSERT INTO reviews (review_description, review_rating, resort_id, user_id) VALUES ($review_description, $review_rating, (SELECT id FROM resorts WHERE id=$resort_id), (SELECT id FROM users WHERE id=$activeUserId))",
+      {
+        bind: {
+          review_description: review_description,
+          review_rating: review_rating,
+          resort_id: resort_id,
+          activeUserId: activeUserId,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "new review registered",
+    });
+  } else {
+    throw new UnauthenticatedError("Authentication invalid");
   }
-
-  // const { review_description, review_rating, resort_id, user_id } = req.body;
-
-  // await sequelize.query(
-  //   "INSERT INTO reviews ( review_description, review_rating, resort_id, user_id) VALUES ( $review_description, $review_rating, $resort_id, $owner_id)",
-  //   {
-  //     bind: {
-  //       review_description: review_description,
-  //       review_rating: review_rating,
-  //       resort_id: resort_id,
-  //       user_id: user_id,
-  //     },
-  //   }
-  // );
-
-  // return res.status(200).json({
-  //   message: "new review was created",
-  // });
-  return res.status(200).json({
-    message: "createNewReview works",
-  });
 };
 exports.deleteReviewById = async (req, res) => {
-  //om anv är inloggad och review är skriven av denna user
-  return res.status(200).json({
-    message: "deleteReviewById works",
-  });
+  const activeUserId = req.user.userId;
+  const reviewId = req.params.reviewId;
+
+  const [review] = await sequelize.query(
+    `SELECT * FROM reviews WHERE id= $reviewId;`,
+    {
+      bind: {
+        reviewId: req.params.reviewId,
+      },
+    }
+  );
+
+  if (review.length == 0) {
+    throw new BadRequestError("That review does not exists");
+  }
+
+  const writerId = review[0].user_id;
+
+  if (req.user.role == userRoles.ADMIN || activeUserId == writerId) {
+    await sequelize.query(`DELETE FROM reviews WHERE id = $reviewId;`, {
+      bind: { reviewId: reviewId },
+    });
+    return res.sendStatus(204);
+  } else {
+    throw new UnauthorizedError("This review is not yours to delete");
+  }
 };
