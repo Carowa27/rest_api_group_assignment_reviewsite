@@ -107,7 +107,7 @@ exports.updateResortById = async (req, res) => {
     }
   );
   if (resortsListed.length <= 0) {
-    throw new UnauthorizedError("Can't find a resorts with that ID");
+    throw new UnauthorizedError("Can't find a resort with that ID");
   }
 
   if (
@@ -194,38 +194,38 @@ exports.deleteResortById = async (req, res) => {
     throw new UnauthenticatedError("Authentication invalid");
   }
 
-  const resortsListed = await sequelize.query(
-    "SELECT * FROM resorts WHERE id = $resortId",
-    {
-      bind: {
-        resortId: resortId,
-      },
-      type: QueryTypes.SELECT,
-    }
-  );
-  if (resortsListed.length <= 0) {
-    throw new UnauthorizedError("Can't find a resorts with that ID");
-  }
+  // const resortsListed = await sequelize.query(
+  //   "SELECT * FROM resorts WHERE id = $resortId",
+  //   {
+  //     bind: {
+  //       resortId: resortId,
+  //     },
+  //     type: QueryTypes.SELECT,
+  //   }
+  // );
+  // if (resortsListed.length <= 0) {
+  //   throw new UnauthorizedError("Can't find a resorts with that ID");
+  // }
 
-  if (
-    req.user.role == userRoles.ADMIN ||
-    activeUserId == resortsListed[0].owner_id
-  ) {
-    await sequelize.query(
-      `
-      DELETE FROM resorts WHERE id = $resortId;
-    `,
-      {
-        bind: {
-          resortId: resortId,
-        },
-        type: QueryTypes.DELETE,
-      }
-    );
-    return res.status(200).json({
-      message: "Resort deleted",
-    });
-  } else {
-    throw new UnauthorizedError("This aint yourz");
-  }
+  // if (
+  //   req.user.role == userRoles.ADMIN ||
+  //   activeUserId == resortsListed[0].owner_id
+  // ) {
+  //   await sequelize.query(
+  //     `
+  //     DELETE FROM resorts WHERE id = $resortId;
+  //   `,
+  //     {
+  //       bind: {
+  //         resortId: resortId,
+  //       },
+  //       type: QueryTypes.DELETE,
+  //     }
+  //   );
+  //   return res.status(200).json({
+  //     message: "Resort deleted",
+  //   });
+  // } else {
+  //   throw new UnauthorizedError("This aint yourz");
+  // }
 };

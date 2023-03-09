@@ -58,7 +58,7 @@ exports.deleteUserById = async (req, res) => {
     `SELECT * FROM users WHERE id= $userId;`,
     {
       bind: {
-        userId: req.params.userId,
+        userId: userId,
       },
     }
   );
@@ -67,29 +67,43 @@ exports.deleteUserById = async (req, res) => {
     throw new BadRequestError("That user does not exists");
   }
   if (req.user.role == userRoles.ADMIN || activeUserId == userId) {
-    const resortsConnectedToUser = await sequelize.query(
-      `SELECT * FROM resorts WHERE resorts.owner_id = $userId;`
-    );
-    const reviewsConnectedToUser = await sequelize.query(
-      `SELECT * FROM reviews WHERE reviews.user_id = $userId;`
-    );
-    if (
-      resortsConnectedToUser.length > 0 ||
-      reviewsConnectedToUser.length > 0
-    ) {
-      if (resortsConnectedToUser.length > 0) {
+    const [resortsConnectedToUser, resortsConnectedToUsersMetaData] =
+      await sequelize.query(
+        `SELECT COUNT(*) FROM resorts WHERE owner_id = $userId;`,
+        {
+          bind: {
+            userId: userId,
+          },
+        }
+      );
+    const [reviewsConnectedToUser, reviewsConnectedToUsersMetaData] =
+      await sequelize.query(
+        `SELECT COUNT(*) AS c FROM reviews WHERE reviews.user_id = $userId;`,
+        {
+          bind: {
+            userId: userId,
+          },
+        }
+      );
+    // return res.status(200).json({
+    //   message: reviewsConnectedToUser[0].c,
+    // });
+    if (resortsConnectedToUser[0].c > 0 || reviewsConnectedToUser[0].c > 0) {
+      if (resortsConnectedToUser[0].c > 0) {
         throw new UnauthorizedError(
           "You are owner to one or more resorts and need to delete your resorts before deleting your account"
         );
       }
-      if (reviewsConnectedToUser.count > 0) {
+      if (reviewsConnectedToUser[0].c > 0) {
         throw new UnauthorizedError(
           "You are writer to one or more reviews and need to delete your reviews before deleting your account"
         );
       }
     } else {
       await sequelize.query(`DELETE FROM users WHERE id = $userId;`, {
-        bind: { userId: userId },
+        bind: {
+          userId: userId,
+        },
       });
     }
     return res.sendStatus(204);
