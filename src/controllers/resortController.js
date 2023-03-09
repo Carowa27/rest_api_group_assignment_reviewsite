@@ -1,4 +1,5 @@
 const { QueryTypes } = require("sequelize");
+//const { SELECT } = require("sequelize/types/query-types");
 const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
 const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
@@ -52,50 +53,88 @@ exports.getAllResortsInCity = async (req, res) => {
 };
 
 exports.createNewResort = async (req, res) => {
+  if (req.user.role == userRoles.ADMIN) {
+    const {
+      resort_name,
+      resort_description,
+      resort_address,
+      resort_website,
+      city_id,
+      owner_id,
+    } = req.body;
+    //const activeUserId = req.user.userId;
+    await sequelize.query(
+      "INSERT INTO resorts (resort_name, resort_description, resort_address, resort_website, city_id, owner_id) VALUES ($resort_name, $resort_description, $resort_address, $resort_website, (SELECT id FROM citys WHERE id=$city_id), (SELECT id FROM users WHERE id=$owner_id))",
+      {
+        bind: {
+          resort_name: resort_name,
+          resort_description: resort_description,
+          resort_address: resort_address,
+          resort_website: resort_website,
+          city_id: city_id,
+          owner_id: owner_id,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "new resort registered",
+    });
+  } else {
+    throw new UnauthorizedError("Authentication invalid");
+  }
+};
+
+exports.updateResortById = async (req, res) => {
+  const resortId = req.params.resortId;
+  const activeUserId = req.user.userId;
+
   const {
     resort_name,
     resort_description,
     resort_address,
     resort_website,
     city_id,
-    owner_id,
   } = req.body;
-
-  if (req.user.role !== userRoles.ADMIN) {
-    // const [userListRole, userListRoleMeta] = await sequelize.query(
-    //   `
-    //     SELECT r.role_name
-    //     FROM users ul
-    //       JOIN roles r ON r.id = ul.fk_roles_id
-    //     WHERE ul.fk_lists_id = $listId AND fk_users_id = $userId
-    //     LIMIT 1
-    //   `,
-    //   {
-    //     bind: { listId: listId, userId: req.user.userId },
-    //     type: QueryTypes.SELECT,
-    //   }
-    // );
-
-    if (!userListRole) {
-      throw new UnauthorizedError("You are not allowed to perform this action");
+  const resortsListed = await sequelize.query(
+    "SELECT * FROM resorts WHERE id = $resortId",
+    {
+      bind: {
+        resortId: resortId,
+      },
     }
+  );
+  if (
+    req.user.role == userRoles.ADMIN ||
+    activeUserId == resortsListed[0].owner_id // Här nånstans är det fel. EFtersom jag är kass.
+  ) {
+    if (resortsListed.length <= 0) {
+      throw new UnauthorizedError("Can't find a resorts with that ID");
+    }
+    await sequelize.query(
+      `
+    UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
+    resort_adress = $resort_address, resort_website = $resort_website, 
+    city_id = $city_id
+    WHERE id = $resortId;
+    RETURNING *;
+    `,
+      {
+        bind: {
+          resort_name: resort_name,
+          resort_description: resort_description,
+          resort_adress: resort_address,
+          resort_website: resort_website,
+          city_id: city_id,
+          resortId: resortId, // ID?
+        },
+      }
+    );
     return res.status(200).json({
-      message: "createNewResort works (userRoles.USER)",
+      message: "Resort updated",
     });
   } else {
-    // ELSE - om vi är admin
-
-    // Kod
-    return res.status(200).json({
-      message: "createNewResort works (userRoles.ADMIN)",
-    });
+    throw new UnauthorizedError("Authentication invalid");
   }
-};
-
-exports.updateResortById = async (req, res) => {
-  return res.status(200).json({
-    message: "updateResortById + auth works",
-  });
 };
 exports.deleteResortById = async (req, res) => {
   return res.status(200).json({
