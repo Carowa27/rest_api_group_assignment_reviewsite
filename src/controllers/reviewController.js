@@ -1,6 +1,6 @@
-const { QueryTypes } = require("sequelize");
 const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
+const { QueryTypes } = require("sequelize");
 const {
   UnauthorizedError,
   NotFoundError,
@@ -10,7 +10,7 @@ const {
 exports.getReviewsFromResort = async (req, res) => {
   const resortId = req.params.resortId;
 
-  const [results, metadata] = await sequelize.query(
+  const [results] = await sequelize.query(
     `
       SELECT reviews.id AS reviewId, review_description, review_rating, user_id, users.username, reviews.resort_id, owner_id, resorts.resort_name FROM reviews
       LEFT JOIN resorts ON resorts.id = resort_id
@@ -19,7 +19,6 @@ exports.getReviewsFromResort = async (req, res) => {
       `,
     {
       bind: { resortId: resortId },
-      type: QueryTypes.SELECT,
     }
   );
   if (!results || results.length == 0) {
@@ -87,7 +86,6 @@ exports.deleteReviewById = async (req, res) => {
   if (req.user.role == userRoles.ADMIN || activeUserId == writerId) {
     await sequelize.query(`DELETE FROM reviews WHERE id = $reviewId;`, {
       bind: { reviewId: reviewId },
-      type: QueryTypes.DELETE,
     });
     return res.sendStatus(204);
   } else {
