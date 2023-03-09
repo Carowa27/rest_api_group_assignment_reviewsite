@@ -13,13 +13,12 @@ exports.updateUserById = async (req, res) => {
   const activeUserId = req.user.userId;
   const userId = Number(req.params.userId);
 
-  const [userToChange] = await sequelize.query(
+  const userToChange = await sequelize.query(
     `SELECT * FROM users WHERE id= $userId;`,
     {
       bind: {
         userId: req.params.userId,
       },
-      type: QueryTypes.SELECT,
     }
   );
 
@@ -32,7 +31,7 @@ exports.updateUserById = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
 
-    const [updatedUser] = await sequelize.query(
+    await sequelize.query(
       `UPDATE users SET password = $password, email = $email, full_name = $full_name WHERE id = $userId RETURNING id, username, password, email, full_name, isAdmin;`,
       {
         bind: {
@@ -41,11 +40,10 @@ exports.updateUserById = async (req, res) => {
           email: email,
           password: hashedpassword,
         },
-        type: QueryTypes.UPDATE
       }
     );
     return res.status(200).json({
-      message: updatedUser,
+      message: "user updated",
     });
   } else {
     throw new UnauthenticatedError("Authentication invalid");
@@ -56,13 +54,12 @@ exports.deleteUserById = async (req, res) => {
   const activeUserId = req.user.userId;
   const userId = Number(req.params.userId);
 
-  const [userExist] = await sequelize.query(
+  const userExist = await sequelize.query(
     `SELECT * FROM users WHERE id= $userId;`,
     {
       bind: {
         userId: req.params.userId,
       },
-      type: QueryTypes.SELECT
     }
   );
 
@@ -90,7 +87,6 @@ exports.deleteUserById = async (req, res) => {
     } else {
       await sequelize.query(`DELETE FROM users WHERE id = $userId;`, {
         bind: { userId: userId },
-        type: QueryTypes.DELETE
       });
     }
     return res.sendStatus(204);
