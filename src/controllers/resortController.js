@@ -24,7 +24,8 @@ exports.getResortById = async (req, res) => {
     {
       bind: { resortId: resortId },
       type: QueryTypes.SELECT,
-    }
+    },
+    
   );
   if (!results || results.length == 0) {
     throw new NotFoundError("did not find a resort with that id");
@@ -107,13 +108,14 @@ exports.updateResortById = async (req, res) => {
     }
   );
   if (resortsListed.length <= 0) {
-    throw new UnauthorizedError("Can't find a resort with that ID");
+    throw new UnauthorizedError("Can't find a resorts with that ID");
   }
 
   if (
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id
   ) {
+   
     await sequelize.query(
       `
     UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
@@ -144,88 +146,50 @@ exports.updateResortById = async (req, res) => {
 exports.deleteResortById = async (req, res) => {
   const resortId = req.params.resortId;
   const activeUserId = req.user.userId;
-
-  const resortExist = await sequelize.query(
-    `SELECT * FROM resorts WHERE id= $resortId;`,
+  const resortsListed = await sequelize.query(
+    "SELECT * FROM resorts WHERE id = $resortId",
     {
       bind: {
-        resortId: req.params.resortId,
+        resortId: resortId,
       },
+      type: QueryTypes.SELECT,
     }
   );
-
-  if (resortExist.length == 0) {
-    throw new BadRequestError("That user does not exists");
+  if (resortsListed.length <= 0) {
+    throw new UnauthorizedError("Can't find a resorts with that ID");
   }
+
   if (
     req.user.role == userRoles.ADMIN ||
-    activeUserId == resortExist.owner_id
+    activeUserId == resortsListed[0].owner_id
   ) {
-    // const resortsConnectedToUser = await sequelize.query(
-    //   `SELECT * FROM resorts WHERE resorts.owner_id = $userId;`
-    // );
-    const reviewsConnectedToResort = await sequelize.query(
-      `SELECT * FROM reviews WHERE reviews.resort_id = $resortId;`
-    );
-    if (
-      /*resortsConnectedToUser.length > 0 ||*/ reviewsConnectedToResort.length >
-      0
-    ) {
-      // if (resortsConnectedToUser.length > 0) {
-      //   throw new UnauthorizedError(
-      //     "You are owner to one or more resorts and need to delete your resorts before deleting your account"
-      //   );
-      // }
-      // return res.status(200).json({
-      //   message: reviewsConnectedToResort.length,
-      // });
-      if (reviewsConnectedToResort.length > 0) {
-        throw new UnauthorizedError(
-          "This resort has one or more reviews and need to delete them before deleting your account"
-        );
+    
+    await sequelize.query(
+      `
+      DELETE FROM reviews WHERE resort_id = $resortId;
+    `,
+      {
+        bind: {
+          resortId: resortId,
+        },
+        type: QueryTypes.DELETE,
       }
-    } else {
-      await sequelize.query(`DELETE FROM resort WHERE id = $resortId;`, {
-        bind: { resortId: resortId },
-      });
-    }
-    return res.sendStatus(204);
+    );
+    await sequelize.query(
+      `
+      DELETE FROM resorts WHERE id = $resortId;
+    `,
+      {
+        bind: {
+          resortId: resortId,
+        },
+        type: QueryTypes.DELETE,
+      }
+    );
+    return res.status(200).json({
+      message: "Resort deleted",
+    });
   } else {
-    throw new UnauthenticatedError("Authentication invalid");
+    throw new UnauthorizedError("This aint yourz");
   }
-
-  // const resortsListed = await sequelize.query(
-  //   "SELECT * FROM resorts WHERE id = $resortId",
-  //   {
-  //     bind: {
-  //       resortId: resortId,
-  //     },
-  //     type: QueryTypes.SELECT,
-  //   }
-  // );
-  // if (resortsListed.length <= 0) {
-  //   throw new UnauthorizedError("Can't find a resorts with that ID");
-  // }
-
-  // if (
-  //   req.user.role == userRoles.ADMIN ||
-  //   activeUserId == resortsListed[0].owner_id
-  // ) {
-  //   await sequelize.query(
-  //     `
-  //     DELETE FROM resorts WHERE id = $resortId;
-  //   `,
-  //     {
-  //       bind: {
-  //         resortId: resortId,
-  //       },
-  //       type: QueryTypes.DELETE,
-  //     }
-  //   );
-  //   return res.status(200).json({
-  //     message: "Resort deleted",
-  //   });
-  // } else {
-  //   throw new UnauthorizedError("This aint yourz");
-  // }
 };
