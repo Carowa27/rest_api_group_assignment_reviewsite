@@ -104,11 +104,9 @@ exports.updateResortById = async (req, res) => {
     }
   );
 
-  console.log(resortsListed[0].owner_id)
-  console.log(activeUserId)
   if (
     req.user.role == userRoles.ADMIN ||
-    activeUserId == resortsListed[0].owner_id // Här nånstans är det fel. EFtersom jag är kass.
+    activeUserId == resortsListed[0].owner_id
   ) {
     if (resortsListed.length <= 0) {
       throw new UnauthorizedError("Can't find a resorts with that ID");
@@ -128,7 +126,7 @@ exports.updateResortById = async (req, res) => {
           resort_address: resort_address,
           resort_website: resort_website,
           city_id: city_id,
-          resortId: resortId, // ID?
+          resortId: resortId,
         },
       }
     );
@@ -140,7 +138,38 @@ exports.updateResortById = async (req, res) => {
   }
 };
 exports.deleteResortById = async (req, res) => {
-  return res.status(200).json({
-    message: "deleteResortById + auth works",
-  });
+  const resortId = req.params.resortId;
+  const activeUserId = req.user.userId;
+  const [resortsListed] = await sequelize.query(
+    "SELECT * FROM resorts WHERE id = $resortId",
+    {
+      bind: {
+        resortId: resortId,
+      },
+    }
+  );
+
+  if (
+    req.user.role == userRoles.ADMIN ||
+    activeUserId == resortsListed[0].owner_id
+  ) {
+    if (resortsListed.length <= 0) {
+      throw new UnauthorizedError("Can't find a resorts with that ID");
+    }
+    await sequelize.query(
+      `
+      DELETE FROM resorts WHERE id = $resortId;
+    `,
+      {
+        bind: {
+          resortId: resortId,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "Resort deleted",
+    });
+  } else {
+    throw new UnauthorizedError("This aint yourz");
+  }
 };
