@@ -24,6 +24,7 @@ exports.register = async (req, res) => {
         email: email,
         full_name: full_name,
       },
+      type: QueryTypes.INSERT,
     }
   );
 

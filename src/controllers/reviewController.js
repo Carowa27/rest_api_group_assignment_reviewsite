@@ -19,6 +19,7 @@ exports.getReviewsFromResort = async (req, res) => {
       `,
     {
       bind: { resortId: resortId },
+      type: QueryTypes.SELECT,
     }
   );
   if (!results || results.length == 0) {
@@ -53,6 +54,7 @@ exports.createNewReview = async (req, res) => {
           resort_id: resort_id,
           activeUserId: activeUserId,
         },
+        type: QueryTypes.INSERT,
       }
     );
     return res.status(200).json({
@@ -72,6 +74,7 @@ exports.deleteReviewById = async (req, res) => {
       bind: {
         reviewId: req.params.reviewId,
       },
+      type: QueryTypes.SELECT,
     }
   );
 
@@ -84,6 +87,7 @@ exports.deleteReviewById = async (req, res) => {
   if (req.user.role == userRoles.ADMIN || activeUserId == writerId) {
     await sequelize.query(`DELETE FROM reviews WHERE id = $reviewId;`, {
       bind: { reviewId: reviewId },
+      type: QueryTypes.DELETE,
     });
     return res.sendStatus(204);
   } else {

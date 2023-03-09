@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
-const { QueryTypes } = require("sequelize");
 const { userRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
+const { QueryTypes } = require("sequelize");
 const {
   UnauthorizedError,
   NotFoundError,
@@ -19,6 +19,7 @@ exports.updateUserById = async (req, res) => {
       bind: {
         userId: req.params.userId,
       },
+      type: QueryTypes.SELECT,
     }
   );
 
@@ -40,6 +41,7 @@ exports.updateUserById = async (req, res) => {
           email: email,
           password: hashedpassword,
         },
+        type: QueryTypes.UPDATE
       }
     );
     return res.status(200).json({
@@ -60,6 +62,7 @@ exports.deleteUserById = async (req, res) => {
       bind: {
         userId: req.params.userId,
       },
+      type: QueryTypes.SELECT
     }
   );
 
@@ -87,6 +90,7 @@ exports.deleteUserById = async (req, res) => {
     } else {
       await sequelize.query(`DELETE FROM users WHERE id = $userId;`, {
         bind: { userId: userId },
+        type: QueryTypes.DELETE
       });
     }
     return res.sendStatus(204);
