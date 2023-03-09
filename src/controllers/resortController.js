@@ -6,7 +6,9 @@ const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
 exports.getAllResorts = async (req, res) => {
   const [results] = await sequelize.query(
     `SELECT resorts.id AS resortId, resort_name, resort_website, resorts.city_id, citys.city_name FROM resorts
-    LEFT JOIN citys ON city_id = citys.id;
+    LEFT JOIN citys ON city_id = citys.id
+    ORDER BY citys.city_name ASC
+    LIMIT 10;
     `
   );
   return res.json(results);
@@ -39,7 +41,8 @@ exports.getAllResortsInCity = async (req, res) => {
     `
     SELECT resorts.id AS resortId, resort_name, resort_description, resort_website, resort_address, resorts.city_id, citys.city_name FROM resorts
     LEFT JOIN citys ON city_id = citys.id
-    WHERE LOWER(citys.city_name) =LOWER($cityName);
+    WHERE LOWER(citys.city_name) =LOWER($cityName)
+    ORDER BY resort_name ASC;
 		`,
     {
       bind: { cityName: cityName },

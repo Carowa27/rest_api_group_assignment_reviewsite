@@ -191,7 +191,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"full_name\":,\r\n\"email\":,\r\n\"password\":}",
+							"raw": "{\"full_name\":\"\",\r\n\"email\":\"\",\r\n\"password\":\"\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -560,7 +560,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"review_description\":,\r\n\"review_rating\":,\r\n\"resort_id\":}",
+							"raw": "{\"review_description\":\"\",\r\n\"review_rating\":,\r\n\"resort_id\":}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -578,13 +578,6 @@
 								"v1",
 								"reviews",
 								""
-							],
-							"query": [
-								{
-									"key": "",
-									"value": null,
-									"disabled": true
-								}
 							]
 						}
 					},

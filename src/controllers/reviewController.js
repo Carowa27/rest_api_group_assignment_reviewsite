@@ -15,7 +15,8 @@ exports.getReviewsFromResort = async (req, res) => {
       SELECT reviews.id AS reviewId, review_description, review_rating, user_id, users.username, reviews.resort_id, owner_id, resorts.resort_name FROM reviews
       LEFT JOIN resorts ON resorts.id = resort_id
       LEFT JOIN users ON users.id = user_id
-      WHERE resort_id = $resortId;
+      WHERE resort_id = $resortId
+      ORDER BY review_rating ASC;;
       `,
     {
       bind: { resortId: resortId },
@@ -81,7 +82,7 @@ exports.deleteReviewById = async (req, res) => {
     throw new BadRequestError("That review does not exists");
   }
 
-  const writerId = review[0].user_id;
+  const writerId = review.user_id;
 
   if (req.user.role == userRoles.ADMIN || activeUserId == writerId) {
     await sequelize.query(`DELETE FROM reviews WHERE id = $reviewId;`, {
