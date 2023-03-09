@@ -2,6 +2,8 @@ require("dotenv").config();
 require("express-async-errors");
 const cors = require("cors");
 const express = require("express");
+const helmet = require("helmet");
+const xss = require("xss-clean");
 const apiRoutes = require("./routes");
 const { errorMiddleware } = require("./middleware/errorMiddleware");
 const { notFoundMiddleware } = require("./middleware/notFoundMiddleware");
@@ -11,6 +13,9 @@ const { sequelize } = require("./database/config");
 const app = express();
 
 app.use(express.json());
+
+app.use(helmet());
+app.use(xss());
 
 app.use((req, res, next) => {
   console.log(`Processing ${req.method} request to ${req.path}`);
