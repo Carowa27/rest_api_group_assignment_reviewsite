@@ -2,6 +2,7 @@ const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
+const { all } = require("../routes");
 
 exports.getAllResorts = async (req, res) => {
   const [results] = await sequelize.query(
@@ -36,7 +37,7 @@ exports.getResortById = async (req, res) => {
 exports.getAllResortsInCity = async (req, res) => {
   const cityName = req.params.cityName;
 
-  const [results, metadata] = await sequelize.query(
+  const results = await sequelize.query(
     `
     SELECT resorts.id AS resortId, resort_name, resort_description, resort_website, resort_address, resorts.city_id, citys.city_name FROM resorts
     LEFT JOIN citys ON city_id = citys.id
@@ -64,7 +65,6 @@ exports.createNewResort = async (req, res) => {
       city_id,
       owner_id,
     } = req.body;
-    //const activeUserId = req.user.userId;
     await sequelize.query(
       "INSERT INTO resorts (resort_name, resort_description, resort_address, resort_website, city_id, owner_id) VALUES ($resort_name, $resort_description, $resort_address, $resort_website, (SELECT id FROM citys WHERE id=$city_id), (SELECT id FROM users WHERE id=$owner_id))",
       {
