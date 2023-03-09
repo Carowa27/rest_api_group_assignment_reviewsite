@@ -66,18 +66,14 @@ exports.deleteUserById = async (req, res) => {
   if (userExist.length == 0) {
     throw new BadRequestError("That user does not exists");
   }
-  if (
-    req.user.role == userRoles.ADMIN ||
-    activeUserId == userExist.id
-  ) {
-    
+  if (req.user.role == userRoles.ADMIN || activeUserId == userExist.id) {
     await sequelize.query(
       `
       DELETE FROM reviews WHERE user_id = $userId;
     `,
       {
         bind: {
-          resortId: resortId,
+          userId: userId,
         },
         type: QueryTypes.DELETE,
       }
@@ -88,7 +84,7 @@ exports.deleteUserById = async (req, res) => {
     `,
       {
         bind: {
-          resortId: resortId,
+          userId: userId,
         },
         type: QueryTypes.DELETE,
       }
@@ -99,7 +95,7 @@ exports.deleteUserById = async (req, res) => {
     `,
       {
         bind: {
-          resortId: resortId,
+          userId: userId,
         },
         type: QueryTypes.DELETE,
       }
