@@ -103,14 +103,15 @@ exports.updateResortById = async (req, res) => {
       },
     }
   );
+  if (resortsListed.length <= 0) {
+    throw new UnauthorizedError("Can't find a resorts with that ID");
+  }
 
   if (
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id
   ) {
-    if (resortsListed.length <= 0) {
-      throw new UnauthorizedError("Can't find a resorts with that ID");
-    }
+   
     await sequelize.query(
       `
     UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
@@ -148,14 +149,15 @@ exports.deleteResortById = async (req, res) => {
       },
     }
   );
+  if (resortsListed.length <= 0) {
+    throw new UnauthorizedError("Can't find a resorts with that ID");
+  }
 
   if (
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id
   ) {
-    if (resortsListed.length <= 0) {
-      throw new UnauthorizedError("Can't find a resorts with that ID");
-    }
+    
     await sequelize.query(
       `
       DELETE FROM resorts WHERE id = $resortId;
