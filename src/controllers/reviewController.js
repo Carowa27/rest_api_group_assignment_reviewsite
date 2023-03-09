@@ -1,4 +1,4 @@
-const { userRoles, listRoles } = require("../constants/user");
+const { userRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const {

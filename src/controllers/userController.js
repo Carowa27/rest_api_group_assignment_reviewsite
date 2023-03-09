@@ -4,7 +4,6 @@ const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const {
   UnauthorizedError,
-  NotFoundError,
   BadRequestError,
   UnauthenticatedError,
 } = require("../utils/errorHandling");

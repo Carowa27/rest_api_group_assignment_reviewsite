@@ -1,8 +1,7 @@
-const { userRoles, listRoles } = require("../constants/user");
+const { userRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
 const { QueryTypes } = require("sequelize");
 const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
-const { all } = require("../routes");
 
 exports.getAllResorts = async (req, res) => {
   const [results] = await sequelize.query(
@@ -24,8 +23,7 @@ exports.getResortById = async (req, res) => {
     {
       bind: { resortId: resortId },
       type: QueryTypes.SELECT,
-    },
-    
+    }
   );
   if (!results || results.length == 0) {
     throw new NotFoundError("did not find a resort with that id");
@@ -115,7 +113,6 @@ exports.updateResortById = async (req, res) => {
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id
   ) {
-   
     await sequelize.query(
       `
     UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
@@ -163,7 +160,6 @@ exports.deleteResortById = async (req, res) => {
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id
   ) {
-    
     await sequelize.query(
       `
       DELETE FROM reviews WHERE resort_id = $resortId;

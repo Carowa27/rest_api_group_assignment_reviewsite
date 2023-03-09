@@ -1,4 +1,3 @@
-//api/v1/resorts
 const express = require("express");
 const router = express.Router();
 const { isAuthenticated } = require("../middleware/authenticationMiddleware");

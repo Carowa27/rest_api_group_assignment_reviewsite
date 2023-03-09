@@ -11,10 +11,6 @@ exports.register = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedpassword = await bcrypt.hash(password, salt);
 
-  /*  const [results, metadata] = await sequelize.query(
-    "SELECT id FROM users LIMIT 1"
-  ); */
-
   await sequelize.query(
     "INSERT INTO users (username, password, email, full_name, isAdmin) VALUES ($username, $password, $email, $full_name, FALSE)",
     {
@@ -69,8 +65,7 @@ exports.login = async (req, res) => {
   };
 
   const jwtToken = jwt.sign(jwtPayload, process.env.JWT_SECRET, {
-    expiresIn: "1d",
-    // process.env.JTW_EXPERATION_TIME,
+    expiresIn: process.env.JTW_EXPERATION_TIME,
   });
 
   return res.json({ token: jwtToken, user: jwtPayload });
