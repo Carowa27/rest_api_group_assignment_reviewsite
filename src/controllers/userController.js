@@ -85,9 +85,6 @@ exports.deleteUserById = async (req, res) => {
           },
         }
       );
-    // return res.status(200).json({
-    //   message: reviewsConnectedToUser[0].c,
-    // });
     if (resortsConnectedToUser[0].c > 0 || reviewsConnectedToUser[0].c > 0) {
       if (resortsConnectedToUser[0].c > 0) {
         throw new UnauthorizedError(
