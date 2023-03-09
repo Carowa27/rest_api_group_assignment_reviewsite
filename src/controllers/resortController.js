@@ -95,7 +95,7 @@ exports.updateResortById = async (req, res) => {
     resort_website,
     city_id,
   } = req.body;
-  const resortsListed = await sequelize.query(
+  const [resortsListed, metadata] = await sequelize.query(
     "SELECT * FROM resorts WHERE id = $resortId",
     {
       bind: {
@@ -103,6 +103,9 @@ exports.updateResortById = async (req, res) => {
       },
     }
   );
+
+  console.log(resortsListed[0].owner_id)
+  console.log(activeUserId)
   if (
     req.user.role == userRoles.ADMIN ||
     activeUserId == resortsListed[0].owner_id // Här nånstans är det fel. EFtersom jag är kass.
@@ -113,7 +116,7 @@ exports.updateResortById = async (req, res) => {
     await sequelize.query(
       `
     UPDATE resorts SET resort_name = $resort_name, resort_description = $resort_description, 
-    resort_adress = $resort_address, resort_website = $resort_website, 
+    resort_address = $resort_address, resort_website = $resort_website, 
     city_id = $city_id
     WHERE id = $resortId;
     RETURNING *;
@@ -122,7 +125,7 @@ exports.updateResortById = async (req, res) => {
         bind: {
           resort_name: resort_name,
           resort_description: resort_description,
-          resort_adress: resort_address,
+          resort_address: resort_address,
           resort_website: resort_website,
           city_id: city_id,
           resortId: resortId, // ID?
