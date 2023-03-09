@@ -66,45 +66,48 @@ exports.deleteUserById = async (req, res) => {
   if (userExist.length == 0) {
     throw new BadRequestError("That user does not exists");
   }
-  if (req.user.role == userRoles.ADMIN || activeUserId == userId) {
-    const [resortsConnectedToUser, resortsConnectedToUsersMetaData] =
-      await sequelize.query(
-        `SELECT COUNT(*) FROM resorts WHERE owner_id = $userId;`,
-        {
-          bind: {
-            userId: userId,
-          },
-        }
-      );
-    const [reviewsConnectedToUser, reviewsConnectedToUsersMetaData] =
-      await sequelize.query(
-        `SELECT COUNT(*) AS c FROM reviews WHERE reviews.user_id = $userId;`,
-        {
-          bind: {
-            userId: userId,
-          },
-        }
-      );
-    if (resortsConnectedToUser[0].c > 0 || reviewsConnectedToUser[0].c > 0) {
-      if (resortsConnectedToUser[0].c > 0) {
-        throw new UnauthorizedError(
-          "You are owner to one or more resorts and need to delete your resorts before deleting your account"
-        );
-      }
-      if (reviewsConnectedToUser[0].c > 0) {
-        throw new UnauthorizedError(
-          "You are writer to one or more reviews and need to delete your reviews before deleting your account"
-        );
-      }
-    } else {
-      await sequelize.query(`DELETE FROM users WHERE id = $userId;`, {
+  if (
+    req.user.role == userRoles.ADMIN ||
+    activeUserId == userExist.id
+  ) {
+    
+    await sequelize.query(
+      `
+      DELETE FROM reviews WHERE user_id = $userId;
+    `,
+      {
         bind: {
-          userId: userId,
+          resortId: resortId,
         },
-      });
-    }
-    return res.sendStatus(204);
+        type: QueryTypes.DELETE,
+      }
+    );
+    await sequelize.query(
+      `
+      DELETE FROM resorts WHERE owner_id = $userId;
+    `,
+      {
+        bind: {
+          resortId: resortId,
+        },
+        type: QueryTypes.DELETE,
+      }
+    );
+    await sequelize.query(
+      `
+      DELETE FROM users WHERE id = $userId;
+    `,
+      {
+        bind: {
+          resortId: resortId,
+        },
+        type: QueryTypes.DELETE,
+      }
+    );
+    return res.status(200).json({
+      message: "user deleted",
+    });
   } else {
-    throw new UnauthenticatedError("Authentication invalid");
+    throw new UnauthorizedError("This aint you");
   }
 };
