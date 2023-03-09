@@ -1,7 +1,6 @@
-const { QueryTypes } = require("sequelize");
-//const { SELECT } = require("sequelize/types/query-types");
 const { userRoles, listRoles } = require("../constants/user");
 const { sequelize } = require("../database/config");
+const { QueryTypes } = require("sequelize");
 const { UnauthorizedError, NotFoundError } = require("../utils/errorHandling");
 
 exports.getAllResorts = async (req, res) => {
@@ -23,7 +22,9 @@ exports.getResortById = async (req, res) => {
 		`,
     {
       bind: { resortId: resortId },
-    }
+      type: QueryTypes.SELECT,
+    },
+    
   );
   if (!results || results.length == 0) {
     throw new NotFoundError("did not find a resort with that id");
@@ -43,6 +44,7 @@ exports.getAllResortsInCity = async (req, res) => {
 		`,
     {
       bind: { cityName: cityName },
+      type: QueryTypes.SELECT,
     }
   );
   if (!results || results.length == 0) {
@@ -74,6 +76,7 @@ exports.createNewResort = async (req, res) => {
           city_id: city_id,
           owner_id: owner_id,
         },
+        type: QueryTypes.INSERT,
       }
     );
     return res.status(200).json({
@@ -95,12 +98,13 @@ exports.updateResortById = async (req, res) => {
     resort_website,
     city_id,
   } = req.body;
-  const [resortsListed, metadata] = await sequelize.query(
+  const resortsListed = await sequelize.query(
     "SELECT * FROM resorts WHERE id = $resortId",
     {
       bind: {
         resortId: resortId,
       },
+      type: QueryTypes.SELECT,
     }
   );
   if (resortsListed.length <= 0) {
@@ -129,6 +133,7 @@ exports.updateResortById = async (req, res) => {
           city_id: city_id,
           resortId: resortId,
         },
+        type: QueryTypes.UPDATE,
       }
     );
     return res.status(200).json({
@@ -141,12 +146,13 @@ exports.updateResortById = async (req, res) => {
 exports.deleteResortById = async (req, res) => {
   const resortId = req.params.resortId;
   const activeUserId = req.user.userId;
-  const [resortsListed] = await sequelize.query(
+  const resortsListed = await sequelize.query(
     "SELECT * FROM resorts WHERE id = $resortId",
     {
       bind: {
         resortId: resortId,
       },
+      type: QueryTypes.SELECT,
     }
   );
   if (resortsListed.length <= 0) {
@@ -166,6 +172,7 @@ exports.deleteResortById = async (req, res) => {
         bind: {
           resortId: resortId,
         },
+        type: QueryTypes.DELETE,
       }
     );
     return res.status(200).json({
